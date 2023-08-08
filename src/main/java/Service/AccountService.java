@@ -11,10 +11,11 @@ public Account addAccount(Account account){
    }
 
 
-   public boolean getByUsername(String username){
-    boolean existingAccount = accountDAO.getByUsername(username);
-    return existingAccount;
-}
+//    public boolean getByUsername(String username){
+//     boolean existingAccount = accountDAO.getByUsername(username);
+//     return existingAccount;
+// }
+
 }
 
 

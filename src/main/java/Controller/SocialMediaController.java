@@ -15,6 +15,9 @@ import io.javalin.http.Context;
  */
 public class SocialMediaController {
     AccountService accountService;
+    public SocialMediaController(){
+        this.accountService = new AccountService();
+    }
 
     /**
      * In order for the test cases to work, you will need to write the endpoints in the startAPI() method, as the test
@@ -29,37 +32,57 @@ public class SocialMediaController {
     }
 
 
-    private void postRegistrationHandler(Context ctx) throws JsonProcessingException {
+    private Account postRegistrationHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Account account = mapper.readValue(ctx.body(), Account.class);
-       
-
-        
-        if (account.getPassword().length() < 4 )  {
-            ctx.status(400);
-            //ctx.result("Password must be at least 4 characters long");
-            return;
-        }
-        if ( account.getUsername().length()<1)  {
-            ctx.status(400);
-            //ctx.result("Password must be at least 4 characters long");
-            return;
-        }
-        if(accountService.getByUsername(account.getUsername()) ==true){
-         ctx.status(400);
-        }
 
         Account addedAccount = accountService.addAccount(account);
 
-        if(addedAccount==null){
-            ctx.status(400);
-            return;
-        }else{
-            ctx.json(mapper.writeValueAsString(addedAccount));
-            ctx.status(200);
-            return;
+        boolean condition = ((account.getUsername() == null || account.getAccount_id() ==0
+        || account.getPassword() == null || account.getPassword().length() < 4
+        || account.getUsername() != null));
+       
+        if(addedAccount != null){
+                ctx.json(mapper.writeValueAsString(addedAccount));
+                ctx.status(200);   
+            }
+           ctx.status(400);
+        return addedAccount;
         }
-    }
+    } 
+
+       
+    //     if ((account.getPassword().length() > 4) || ((account.getUsername().length() == 0) && (account.getUsername() == null)))  {
+    //          ctx.json(mapper.writeValueAsString(addedAccount));
+    //         ctx.status(200);
+    //         return;
+    //     } else{
+
+    //         ctx.status(400);
+    //    }
+
+    //    }
+        
+        // if ( account.getUsername().length()<1)  {
+        //     ctx.status(400);
+        //     //ctx.result("Password must be at least 4 characters long");
+        //     return;
+        // }
+        // if(accountService.getByUsername(account.getUsername()) ==true){
+        //  ctx.status(400);
+        // }
+
+     
+
+        // if(addedAccount==null){
+        //     ctx.status(400);
+        //     return;
+        // }else{
+        //     ctx.json(mapper.writeValueAsString(addedAccount));
+        //     ctx.status(200);
+        //     return;
+        // }
+    // }
 
 
     // private void postRegistrationHandler(Context ctx) throws JsonProcessingException {
@@ -117,4 +140,3 @@ public class SocialMediaController {
     // }
 
 
-}
