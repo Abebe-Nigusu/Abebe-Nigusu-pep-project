@@ -1,5 +1,10 @@
 package Controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import Model.Account;
+import Service.AccountService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
@@ -9,6 +14,8 @@ import io.javalin.http.Context;
  * refer to prior mini-project labs and lecture materials for guidance on how a controller may be built.
  */
 public class SocialMediaController {
+    AccountService accountService;
+
     /**
      * In order for the test cases to work, you will need to write the endpoints in the startAPI() method, as the test
      * suite must receive a Javalin object from this method.
@@ -16,18 +23,98 @@ public class SocialMediaController {
      */
     public Javalin startAPI() {
         Javalin app = Javalin.create();
-        app.get("example-endpoint", this::exampleHandler);
+        app.post("/register", this::postRegistrationHandler);
 
         return app;
     }
+
+
+    private void postRegistrationHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Account account = mapper.readValue(ctx.body(), Account.class);
+       
+
+        
+        if (account.getPassword().length() < 4 )  {
+            ctx.status(400);
+            //ctx.result("Password must be at least 4 characters long");
+            return;
+        }
+        if ( account.getUsername().length()<1)  {
+            ctx.status(400);
+            //ctx.result("Password must be at least 4 characters long");
+            return;
+        }
+        if(accountService.getByUsername(account.getUsername()) ==true){
+         ctx.status(400);
+        }
+
+        Account addedAccount = accountService.addAccount(account);
+
+        if(addedAccount==null){
+            ctx.status(400);
+            return;
+        }else{
+            ctx.json(mapper.writeValueAsString(addedAccount));
+            ctx.status(200);
+            return;
+        }
+    }
+
+
+    // private void postRegistrationHandler(Context ctx) throws JsonProcessingException {
+    //     ObjectMapper mapper = new ObjectMapper();
+    //     String requestBody = ctx.body();
+    //     System.out.println(requestBody);
+    
+    //     if (requestBody == null || requestBody.isEmpty()) {
+    //         ctx.status(400);
+    //         return;
+    //     }
+    
+    //     Account account = mapper.readValue(requestBody, Account.class);
+    //     System.out.println("*************************");
+    //         System.out.println(account.getPassword());
+    //         System.out.println(account.getUsername());
+
+    //     if (account.getPassword() == null || account.getPassword().length() < 4) {
+    //         ctx.status(400);
+    //         return;
+    //     }
+    //     if (account.getUsername() == null || account.getUsername().length() < 1) {
+    //         ctx.status(400);
+    //         return;
+    //     }
+    //     // if (accountService.getByUsername(account.getUsername())) {
+    //     //     ctx.status(400);
+    //     //     return;
+    //     // }
+    //     Account addedAccount;
+    
+    //    try {
+    //       addedAccount = accountService.addAccount(account);
+    //    } catch (Exception e) {
+    //     System.out.println(" *******************" + e.getMessage());
+        
+    //    }
+    //     //System.out.println(addedAccount);
+    
+    //     if (addedAccount == null) {
+    //         ctx.status(400);
+    //     } else {
+    //         ctx.json(mapper.writeValueAsString(addedAccount));
+    //         ctx.status(200);
+    //     }
+    // }
+    
 
     /**
      * This is an example handler for an example endpoint.
      * @param context The Javalin Context object manages information about both the HTTP request and response.
      */
-    private void exampleHandler(Context context) {
-        context.json("sample text");
-    }
+    // private void exampleHandler(Context context) {
+    //     context.json("sample text");
+    // }
 
 
 }
