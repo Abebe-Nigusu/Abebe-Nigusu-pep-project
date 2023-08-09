@@ -1,8 +1,5 @@
 package Controller;
 
-import java.util.HashMap;
-import java.util.Map;
-
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,6 +21,7 @@ public class SocialMediaController {
         Javalin app = Javalin.create();
         app.post("/register", this::postRegistrationHandler);
         app.post("/login", this::postLoginHandler);
+        //app.post(localhost:8080/messages, this.postMessageHandler);
 
         return app;
     }
@@ -37,16 +35,35 @@ public class SocialMediaController {
         //  Map<String, String> users = new HashMap<>();
 
        
-          if (account.getUsername() == null ||  account.getUsername() == " ") {
+          if (accountService.getAccountByAccountId(account.getAccount_id()) != null) {
             ctx.status(400).result("Username cannot be blank.");
             return;
+          } 
+
+          if ( (account.getPassword()).length() < 4) {
+                ctx.status(400).result("Password must be at least 4 characters long");
+                return;
           }
+
+        Account addedAccount = accountService.registerAccount(account);
+
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" + addedAccount);
+
+        if(addedAccount != null){
+          ctx.json(mapper.writeValueAsString(addedAccount));
+          ctx.status(200);  
+          return;
+          } else{
+              ctx.status(400);
+              return;
+          } 
+    
      
 
-           if (account.getPassword() == null || (account.getPassword()).length() < 4) {
-            ctx.status(400).result("Password must be at least 4 characters long");
-            return;
-        }
+        //    if (account.getPassword() == null || (account.getPassword()).length() < 4) {
+        //     ctx.status(400).result("Password must be at least 4 characters long");
+        //     return;
+        // }
 
         //   if (account.getPassword() == null || account.getPassword().isEmpty()) {
         //     ctx.status(400).result("Password must be at least 4 characters long.");
@@ -56,19 +73,17 @@ public class SocialMediaController {
         //     ctx.status(400).result("Username already exists.");
         //   }
       
-          
-          Account addedAccount = accountService.registerAccount(account);
+        // int accountId = account.getAccount_id();
+        //   Account addedAccount = accountService.getAccountByAccountId(accountId);
 
-          System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" + addedAccount);
+        //   System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" + addedAccount);
 
-          if(addedAccount != null){
-            ctx.json(mapper.writeValueAsString(addedAccount));
-            ctx.status(200);  
-            return;
-            } else{
-                ctx.status(400);
-                return;
-            } 
+        //   if(addedAccount != null){
+           
+        //     } else{
+        //         ctx.status(400);
+        //         return;
+        //     } 
       
       
    
