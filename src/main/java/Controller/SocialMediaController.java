@@ -1,5 +1,9 @@
 package Controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -8,47 +12,102 @@ import Service.AccountService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
-/**
- * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
- * found in readme.md as well as the test cases. You should
- * refer to prior mini-project labs and lecture materials for guidance on how a controller may be built.
- */
+
 public class SocialMediaController {
     AccountService accountService;
     public SocialMediaController(){
         this.accountService = new AccountService();
     }
 
-    /**
-     * In order for the test cases to work, you will need to write the endpoints in the startAPI() method, as the test
-     * suite must receive a Javalin object from this method.
-     * @return a Javalin app object which defines the behavior of the Javalin controller.
-     */
+  
     public Javalin startAPI() {
         Javalin app = Javalin.create();
         app.post("/register", this::postRegistrationHandler);
+        app.post("/login", this::postLoginHandler);
 
         return app;
     }
 
 
-    private Account postRegistrationHandler(Context ctx) throws JsonProcessingException {
+    private void postRegistrationHandler(Context ctx) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Account account = mapper.readValue(ctx.body(), Account.class);
 
-        Account addedAccount = accountService.addAccount(account);
+ 
+        //  Map<String, String> users = new HashMap<>();
 
-        boolean condition = ((account.getUsername() == null || account.getAccount_id() ==0
-        || account.getPassword() == null || account.getPassword().length() < 4
-        || account.getUsername() != null));
        
-        if(addedAccount != null){
-                ctx.json(mapper.writeValueAsString(addedAccount));
-                ctx.status(200);   
-            }
-           ctx.status(400);
-        return addedAccount;
+          if (account.getUsername() == null ||  account.getUsername().isBlank()) {
+            ctx.status(400).result("Username cannot be blank.");
+            return;
+          }
+     
+        //    if (account.getPassword().length() < 4) {
+        //      ctx.status(400).result("Password must be at least 4 characters long.");
+        //      return;
+        //     }
+
+           if (account.getPassword() == null || account.getPassword().length() < 4) {
+            ctx.status(400).result("Password must be at least 4 characters long");
+            return;
         }
+
+        //   if (account.getPassword() == null || account.getPassword().isEmpty()) {
+        //     ctx.status(400).result("Password must be at least 4 characters long.");
+        //   }
+      
+        //   if (users.containsKey(account.getUsername()) ) {
+        //     ctx.status(400).result("Username already exists.");
+        //   }
+      
+          
+           
+
+          Account addedAccount = accountService.registerAccount(account);
+
+          System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" + addedAccount);
+
+          if(addedAccount != null){
+            ctx.json(mapper.writeValueAsString(addedAccount));
+            ctx.status(200);  
+            return;
+            } else{
+                ctx.status(400);
+                return;
+            } 
+      
+      
+   
+    }
+      
+
+        private void postLoginHandler(Context ctx) throws JsonProcessingException {
+            ObjectMapper mapper = new ObjectMapper();
+            Account account = mapper.readValue(ctx.body(), Account.class);
+    
+            Account loggedInAccount = accountService.loginAccount(account);
+           
+            // if(loggedInAccount == null){
+            //        ctx.status(400); 
+            //     } else{   
+            //         ctx.json(mapper.writeValueAsString(loggedInAccount));
+            //     ctx.status(200);   
+            //         }
+
+                // Account existingUser = new Account(account.getAccount_id(), account.getUsername(), account.getPassword());
+
+                if (loggedInAccount.getUsername().equals(account.getUsername()) &&
+                loggedInAccount.getPassword().equals(account.getPassword())) {
+                    ctx.status(401); // Unauthorized
+                               
+                } else {  
+                    // Create a response JSON with account details including account_id
+                    Account loggedInUser = new Account(loggedInAccount.getAccount_id(), loggedInAccount.getUsername(), loggedInAccount.getPassword() );
+                    ctx.status(200).json(loggedInUser);   
+                }
+               
+             
+            }
     } 
 
        
