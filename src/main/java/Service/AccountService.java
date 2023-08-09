@@ -10,6 +10,10 @@ public class AccountService {
         accountDAO = new AccountDAO();
     }
 
+    public AccountService(AccountDAO accountDAO){
+        this.accountDAO = accountDAO;
+    }
+
 public Account registerAccount(Account account){
         Account newaccount = accountDAO.insertAccountRegistration(account);
         return newaccount;

@@ -37,17 +37,13 @@ public class SocialMediaController {
         //  Map<String, String> users = new HashMap<>();
 
        
-          if (account.getUsername() == null ||  account.getUsername().isBlank()) {
+          if (account.getUsername() == null ||  account.getUsername() == " ") {
             ctx.status(400).result("Username cannot be blank.");
             return;
           }
      
-        //    if (account.getPassword().length() < 4) {
-        //      ctx.status(400).result("Password must be at least 4 characters long.");
-        //      return;
-        //     }
 
-           if (account.getPassword() == null || account.getPassword().length() < 4) {
+           if (account.getPassword() == null || (account.getPassword()).length() < 4) {
             ctx.status(400).result("Password must be at least 4 characters long");
             return;
         }
@@ -61,8 +57,6 @@ public class SocialMediaController {
         //   }
       
           
-           
-
           Account addedAccount = accountService.registerAccount(account);
 
           System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" + addedAccount);
