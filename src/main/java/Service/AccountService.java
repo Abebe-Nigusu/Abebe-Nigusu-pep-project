@@ -7,7 +7,7 @@ import java.util.List;
 import DAO.AccountDAO;
 
 public class AccountService {
-    private AccountDAO accountDAO;
+     AccountDAO accountDAO;
 
         public AccountService() {
             accountDAO = new AccountDAO();
@@ -40,7 +40,7 @@ public class AccountService {
                 return null;
             } else {
 
-                // ISBN does not exist, proceed with persisting the book
+                
                 Account insertedAccount = accountDAO.insertAccountRegistration(account);
                 return insertedAccount;
             }

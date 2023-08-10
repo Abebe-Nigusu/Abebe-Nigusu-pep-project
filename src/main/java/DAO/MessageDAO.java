@@ -19,9 +19,9 @@ public class MessageDAO {
             try {
                 //Write SQL logic here
                 String sql = "SELECT * FROM message";
-
                 PreparedStatement preparedStatement = connection.prepareStatement(sql);
                 ResultSet rs = preparedStatement.executeQuery();
+
                 while(rs.next()){
                     Message message = new Message(rs.getInt("message_id"), rs.getInt("posted_by"),
                             rs.getString("message_text"),  rs.getLong("time_posted_epoch") );
@@ -107,7 +107,47 @@ public class MessageDAO {
         }
 
 
-       
+        public Message deleteMessageById(int message_id) throws SQLException {
+            Connection connection = ConnectionUtil.getConnection();
+            try  {
+                String sql = "DELETE FROM messages WHERE message_id = ?";
+                PreparedStatement statement = connection.prepareStatement(sql); 
+                statement.setInt(1, message_id);
+                int rowsAffected = statement.executeUpdate();
+                if (rowsAffected == 1) {
+                    Message message = getMessageById(message_id);
+                    return message;
+                } 
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                }
+
+            return null;
+        }
+
+        public List<Message> getMessagesByAccountId(int account_id) {
+            Connection connection = ConnectionUtil.getConnection(); 
+                
+                try { String sql = "SELECT * FROM messages WHERE account_id = ?";
+                    PreparedStatement statement = connection.prepareStatement(sql); 
+                    statement.setInt(1, account_id);
+                    ResultSet rs = statement.executeQuery();
+                        List<Message> messages = new ArrayList<>();
+                        while (rs.next()) {
+                           
+                                Message message = new Message(rs.getInt("message_id"), rs.getInt("posted_by"),
+                                        rs.getString("message_text"),  rs.getLong("time_posted_epoch") );
+                             messages.add(message);; 
+                             return messages;
+                            }     
+                        } catch (SQLException e) {
+                                System.out.println(e.getMessage());
+                            }
+                        return null;
+                           
+                        } 
+
+    }
     
         // ... (other methods)
     
@@ -126,29 +166,9 @@ public class MessageDAO {
         //         return false;
         // }
 
-         public Message deleteMessageById(int message_id) throws SQLException {
-            Connection connection = ConnectionUtil.getConnection();
-            try  {
-                String sql = "DELETE FROM messages WHERE message_id = ?";
-                PreparedStatement statement = connection.prepareStatement(sql); 
-                statement.setInt(1, message_id);
-                int rowsAffected = statement.executeUpdate();
-                if (rowsAffected == 1) {
-                    Message message = getMessageById(message_id);
-                        return message;
-                } else {
-                    // If the message was not deleted, return an empty response body
-                    return "";
-                    ctx.status(200);
-                }
-            } catch (SQLException e) {
-                // If there was an error, log the error and return a 500 error response
-                logger.error("Error deleting message", e);
-                ctx.status(500);
-            }
-        }
+        
             
-    }
+    
         
 
         // private static void deleteMessage(int message_id) {
@@ -166,4 +186,4 @@ public class MessageDAO {
         //     }
         // }
         
-}
+
