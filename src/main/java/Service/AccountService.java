@@ -39,8 +39,7 @@ public class AccountService {
             if (addedAccount != null) {
                 return null;
             } else {
-
-                
+   
                 Account insertedAccount = accountDAO.insertAccountRegistration(account);
                 return insertedAccount;
             }
