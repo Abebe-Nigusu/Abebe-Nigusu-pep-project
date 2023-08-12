@@ -39,6 +39,20 @@ public class MessageService {
              return existingMessage;      
            
          }
+//Alternative UPDATE MESSAGE implementation 
+        //  public Message updateMessageText(int messageId, String newMessageText) {
+        //     Message existingMessage = messageDAO.getMessageById(messageId);
+    
+        //     if (existingMessage != null && !newMessageText.isBlank() && newMessageText.length() <= 255) {
+        //         if (messageDAO.updateMessageText(messageId, newMessageText)) {
+        //             // Update successful, return the updated message
+        //             existingMessage.setMessageText(newMessageText);
+        //             return existingMessage;
+        //         }
+        //     }
+    
+        //     return null; // Update not successful
+        // }
 
 
        public List<Message> getMessagesByAccountId() {

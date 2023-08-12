@@ -201,6 +201,22 @@ public class SocialMediaController {
                 }
             } 
 
+
+        //Alternative UPDATE MESSAGE implementation 
+                // public Handler updateMessageText = ctx -> {
+                //     int messageId = Integer.parseInt(ctx.pathParam("message_id"));
+                //     String newMessageText = ctx.body();
+
+                //     Message updatedMessage = messageService.updateMessageText(messageId, newMessageText);
+
+                //     if (updatedMessage != null) {
+                //         ctx.json(updatedMessage);
+                //     } else {
+                //         ctx.status(400); // Bad Request
+                //     }
+                // };
+
+
             private void getMessageByAccountIdHandler(Context ctx) {
                
                 List<Message> messages = messageService.getMessagesByAccountId();
