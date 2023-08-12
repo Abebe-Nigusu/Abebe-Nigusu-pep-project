@@ -74,15 +74,21 @@ public class MessageDAO {
                 preparedStatement.executeUpdate();
 
                 ResultSet pkeyResultSet = preparedStatement.getGeneratedKeys();
-                if (pkeyResultSet.next()) {
-                    int generated_message_id = (int) pkeyResultSet.getInt(1);
-                    return new Message(generated_message_id, message.getPosted_by(), message.getMessage_text(),message.getTime_posted_epoch());
-                }
+                
+                // if (pkeyResultSet.next()) {
+                //     int generated_message_id = (int) pkeyResultSet.getInt(1);
+                //     return new Message(generated_message_id, message.getPosted_by(), message.getMessage_text(),message.getTime_posted_epoch());
+                // }
+
+                while(pkeyResultSet.next()){
+                        message = new Message(message.message_id, message.getPosted_by(), message.getMessage_text(),message.getTime_posted_epoch());
+                    }
                 // return message;
+
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
             }
-            return null;
+            return message;
         }
 
 
@@ -97,8 +103,7 @@ public class MessageDAO {
                 preparedStatement.setInt(1, message.posted_by);
                 preparedStatement.setString(2, message.message_text);
                 preparedStatement.setLong(3, message.time_posted_epoch);
-                
-                preparedStatement.setInt(4, message_id);
+                preparedStatement.setInt(4, message.message_id);
                
                 preparedStatement.executeUpdate();
             }catch(SQLException e){
@@ -126,26 +131,29 @@ public class MessageDAO {
         }
 
         public List<Message> getMessagesByAccountId(int account_id) {
+            List<Message> messages = new ArrayList<>();
             Connection connection = ConnectionUtil.getConnection(); 
                 
                 try { String sql = "SELECT * FROM messages WHERE account_id = ?";
                     PreparedStatement statement = connection.prepareStatement(sql); 
+
                     statement.setInt(1, account_id);
+
                     ResultSet rs = statement.executeQuery();
-                        List<Message> messages = new ArrayList<>();
+                       
                         while (rs.next()) {
                            
                                 Message message = new Message(rs.getInt("message_id"), rs.getInt("posted_by"),
                                         rs.getString("message_text"),  rs.getLong("time_posted_epoch") );
                              messages.add(message);; 
-                             return messages;
+                            
                             }     
                         } catch (SQLException e) {
                                 System.out.println(e.getMessage());
                             }
-                        return null;
+                        return messages;
                            
-                        } 
+                } 
 
     }
     

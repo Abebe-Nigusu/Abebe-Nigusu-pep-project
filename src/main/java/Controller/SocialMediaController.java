@@ -1,6 +1,7 @@
 package Controller;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,18 +27,17 @@ public class SocialMediaController {
     
         public Javalin startAPI() {
             Javalin app = Javalin.create();
-            
-            app.post("/register", this::postRegistrationHandler);
-            app.post("/login", this::postLoginHandler);
-             app.post("/messages", this::postMessageHandler);
-             app.get("/messages", this::getAllMessageHandler);
+                
+                app.post("/register", this::postRegistrationHandler);
+                app.post("/login", this::postLoginHandler);
+                app.post("/messages", this::postMessageHandler);
+                app.get("/messages", this::getAllMessageHandler); 
+                app.get("/accounts/{account_id}/messages", this::getMessageByAccountIdHandler); 
+                app.get("/messages/{message_id}", this::getMessageByMessageIdHandler);
+                app.patch("/messages/{message_id}", this::updateByMessageIdHandler);
+                app.delete("/messages/{message_id}", this::deleteByMessageIdHandler);
 
-            // app.get("/accounts/{account_id}/messages", this::getMessageByAccountIdHandler);
-            // app.get("/messages/{message_id}", this::getMessageByMessageIdHandler);
-            app.patch("/messages/{message_id}", this::updateByMessageIdHandler);
-            // app.delete("/messages/{message_id}", this::deleteByMessageIdHandler);
-            
-
+        
             return app;
         }
 
@@ -138,8 +138,19 @@ public class SocialMediaController {
                     }   else{   
                         ctx.json(messages).status(200);
                      }
-                  
-                     
+      
+            }
+
+
+            private void getMessageByMessageIdHandler(Context ctx) {
+
+                Message message= messageService.getMessagesByMessageId();
+                
+                if (message != null) {
+                    ctx.json(message).status(200);
+                } else {
+                    ctx.json(""); 
+                }
             }
 
 
@@ -188,9 +199,39 @@ public class SocialMediaController {
                     ctx.status(200).json(updatedMessage);
                     return;
                 }
-            }    
+            } 
+
+            private void getMessageByAccountIdHandler(Context ctx) {
+               
+                List<Message> messages = messageService.getMessagesByAccountId();
+        
+                if (messages.isEmpty()) {
+                    ctx.json(new ArrayList<Message>()); //returning empty list
+                } else {
+                    ctx.json(messages);
+                }
+            }
+
+            
+            private void deleteByMessageIdHandler(Context ctx) {
                 
+                Message deletedMessage = messageService.deleteMessagesById();
+    
+                       try{
+                            if (deletedMessage != null) {
+                                ctx.json(deletedMessage);
+                            } else {
+                                ctx.result("");
+                                ctx.status(200);
+                            }
+                        } catch (NumberFormatException e) {
+                            System.out.println(e.getMessage());
+                    }
+            }
+
         }
+                
+        
     
 
        
