@@ -1,8 +1,8 @@
+
 package Service;
 
 import java.sql.SQLException;
 import java.util.List;
-
 import DAO.MessageDAO;
 import Model.Message;
 
@@ -10,65 +10,54 @@ public class MessageService {
 
     MessageDAO messageDAO;
 
-        public MessageService() {
-            messageDAO = new MessageDAO();
-        }
+    public MessageService() {
+        this.messageDAO = new MessageDAO();
+    }
 
-        public MessageService(MessageDAO messageDAO){
-                this.messageDAO = messageDAO;
-            }
+ 
 
-
-        public List<Message> getAllMessagesList() { 
-                return messageDAO.getAllMessages();       
-          
-        }
-
-        public Message getMessagesByMessageId() {
-            return messageDAO.getMessageById(0 );
-        }
-
-        public Message addMessage(Message message){
-            Message newMessage = messageDAO.insertMessage(message);
-            return newMessage;
-        }
-
-        public Message updateMessage(int message_id, Message message){
-            messageDAO.updateMessage(message_id, message);
-            Message existingMessage = messageDAO.getMessageById(message_id);
-             return existingMessage;      
-           
-         }
-//Alternative UPDATE MESSAGE implementation 
-        //  public Message updateMessageText(int messageId, String newMessageText) {
-        //     Message existingMessage = messageDAO.getMessageById(messageId);
+    public List<Message> getAllMessagesList() {
+        return messageDAO.getAllMessages();
+    }
     
-        //     if (existingMessage != null && !newMessageText.isBlank() && newMessageText.length() <= 255) {
-        //         if (messageDAO.updateMessageText(messageId, newMessageText)) {
-        //             // Update successful, return the updated message
-        //             existingMessage.setMessageText(newMessageText);
-        //             return existingMessage;
-        //         }
-        //     }
-    
-        //     return null; // Update not successful
-        // }
+    public Message getMessagesByMessageId(int message_id) {
+        return messageDAO.getMessageById(message_id);
+    }
+
+    public Message addMessage(Message message) {
+        return messageDAO.insertMessage(message);
+    }
 
 
-       public List<Message> getMessagesByAccountId() {
-            return messageDAO.getMessagesByAccountId(0 );
-        }
+
+    public Message updateMessage(int message_id, Message message) {
+        if (message.message_text == null || message.message_text.isEmpty() || message.message_text.length() > 255) {
         
-        
-        public Message deleteMessagesById() {
-            try {
-                return messageDAO.deleteMessageById(0 );
-            } catch (SQLException e) {
-               System.out.println(e.getMessage());
-            }
             return null;
-        }  
-
-
+        }
     
+        messageDAO.updateMessage(message_id, message);
+        return messageDAO.getMessageById(message_id);
+    }
+    
+    
+    public List<Message> getMessagesByAccountId(int account_id) {
+        return messageDAO.getMessagesByAccountId(account_id);
+    }
+
+    public Message deleteMessageByMessageId(int message_id) {
+        try {
+            return messageDAO.deleteMessageById(message_id);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage()); 
+            return null;
+        }
+    }
+
+    public boolean checkIfMessageExists(int messageId) {
+        return messageDAO.messageExists(messageId);
+    }
+    
+    
+
 }

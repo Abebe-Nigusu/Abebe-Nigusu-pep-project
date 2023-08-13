@@ -6,19 +6,10 @@ import java.sql.*;
 
 import Model.Account;
 import Util.ConnectionUtil;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+
 import java.util.ArrayList;
 import java.util.List;
 
-
-/**
- * A DAO is a class that mediates the transformation of data between the format
- * of objects in Java to rows in a
- * database. The methods here are mostly filled out, you will just need to add a
- * SQL statement.
- */
 
 public class AccountDAO {
 
@@ -26,7 +17,6 @@ public class AccountDAO {
         Connection connection = ConnectionUtil.getConnection();
         List<Account> accounts = new ArrayList<>();
         try {
-            //Write SQL logic here
             String sql = "SELECT * FROM account";
 
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -42,6 +32,23 @@ public class AccountDAO {
         return accounts;
     }
 
+    public Account getAccountByUsername(String username) {
+    Connection connection = ConnectionUtil.getConnection();
+    try {
+        String sql = "SELECT * FROM account WHERE username = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setString(1, username);
+        ResultSet rs = preparedStatement.executeQuery();
+        while (rs.next()) {
+            return new Account(rs.getInt("account_id"), rs.getString("username"),
+                    rs.getString("password"));
+        }
+    } catch (SQLException e) {
+        System.out.println(e.getMessage());
+    }
+    return null;
+}
+
 
     public Account getAccountById(int account_id){
         Connection connection = ConnectionUtil.getConnection();
@@ -51,7 +58,6 @@ public class AccountDAO {
             
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
-            //write preparedStatement's setString and setInt methods here.
             preparedStatement.setInt(1, account_id);
 
             ResultSet rs = preparedStatement.executeQuery();
@@ -70,12 +76,10 @@ public class AccountDAO {
     public Account insertAccountRegistration(Account account) {
         Connection connection = ConnectionUtil.getConnection();
         try {
-            // Write SQL logic here
             String sql = "Insert into account(username, password) values(?, ?); ";
             PreparedStatement preparedStatement = connection.prepareStatement(sql,  Statement.RETURN_GENERATED_KEYS);
 
-            // write preparedStatement's setString and setInt methods here.
-          
+           
             preparedStatement.setString(1, account.getUsername());
             preparedStatement.setString(2, account.getPassword());
           
@@ -86,22 +90,37 @@ public class AccountDAO {
                 int generated_account_id = (int) pkeyResultSet.getInt(1);
                 return new Account(generated_account_id, account.getUsername(), account.getPassword());
             }
-            // return account;
+          
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return null;
     }
 
+    public boolean accountExists(int accountId) {
+        Connection connection = ConnectionUtil.getConnection();
+        try {
+            String sql = "SELECT COUNT(*) FROM account WHERE account_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, accountId);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count > 0; 
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } 
+        return false;
+    }
+
 
     public Account insertAccountLogin(Account account) {
         Connection connection = ConnectionUtil.getConnection();
         try {
-            // Write SQL logic here
             String sql = "Insert into account(username, password) values(?, ?); ";
             PreparedStatement preparedStatement = connection.prepareStatement(sql,  Statement.RETURN_GENERATED_KEYS);
 
-            // write preparedStatement's setString and setInt methods here.
             preparedStatement.setString(1, account.getUsername());
             preparedStatement.setString(2, account.getPassword());
 

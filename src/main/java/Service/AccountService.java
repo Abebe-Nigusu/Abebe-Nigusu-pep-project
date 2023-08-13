@@ -19,9 +19,6 @@ public class AccountService {
 
         public List<Account> getAllAccounts() {
                 return accountDAO.getAllAccounts();
-        
-                // List<Account> allAccounts = accountDAO.getAllAccounts();
-                // return allAccounts;
             
             }
 
@@ -31,6 +28,13 @@ public class AccountService {
                 
                 return existingAccount;      
             }
+
+    
+
+            public boolean checkIfAccountExists(int account_id) {
+                return accountDAO.accountExists(account_id);
+            }
+            
 
         public Account registerAccount(Account account){
             int accountId = account.getAccount_id();
@@ -45,15 +49,18 @@ public class AccountService {
             }
             }
 
-        public Account loginAccount(Account account){
-            Account newaccount = accountDAO.insertAccountLogin(account);
-            return newaccount;
-        }
 
-//    public boolean getByUsername(String username){
-//     boolean existingAccount = accountDAO.getByUsername(username);
-//     return existingAccount;
-// }
+
+        public Account loginAccount(Account account) {
+            Account existingAccount = accountDAO.getAccountByUsername(account.getUsername());
+        
+            if (existingAccount == null || !existingAccount.getPassword().equals(account.getPassword())) {
+                return null;
+            }
+        
+            return existingAccount;
+        }
+        
 
 }
 
