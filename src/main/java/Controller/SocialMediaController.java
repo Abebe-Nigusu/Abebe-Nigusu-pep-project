@@ -45,7 +45,7 @@ public class SocialMediaController {
         Account account = mapper.readValue(ctx.body(), Account.class);
 
         if (accountService.getAccountByAccountId(account.getAccount_id()) != null) {
-            ctx.status(400).result("Username cannot be blank.");
+            ctx.status(400);
             return;
         }
 

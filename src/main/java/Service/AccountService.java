@@ -31,7 +31,7 @@ public class AccountService {
 
     
 
-            public boolean checkIfAccountExists(int account_id) {
+        public boolean checkIfAccountExists(int account_id) {
                 return accountDAO.accountExists(account_id);
             }
             
