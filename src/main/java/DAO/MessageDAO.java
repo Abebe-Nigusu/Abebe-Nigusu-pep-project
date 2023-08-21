@@ -57,9 +57,7 @@ public class MessageDAO {
             return message;
         }
         
-    
-
-    
+     
     public Message insertMessage(Message message) {
         Connection connection = ConnectionUtil.getConnection();
         try {
@@ -180,8 +178,6 @@ public class MessageDAO {
         }
 
      
-
-
         public List<Message> getMessagesByAccountId(int account_id) {
             List<Message> messages = new ArrayList<>();
             Connection connection = ConnectionUtil.getConnection(); 

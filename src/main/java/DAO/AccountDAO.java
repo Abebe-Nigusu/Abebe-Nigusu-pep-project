@@ -10,7 +10,6 @@ import Util.ConnectionUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class AccountDAO {
 
     public List<Account> getAllAccounts(){
