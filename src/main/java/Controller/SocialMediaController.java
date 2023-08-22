@@ -40,6 +40,7 @@ public class SocialMediaController {
             return app;
         }
 
+
         private void postRegistrationHandler(Context ctx) throws JsonProcessingException {
             ObjectMapper mapper = new ObjectMapper();
             Account account = mapper.readValue(ctx.body(), Account.class);
@@ -106,6 +107,7 @@ public class SocialMediaController {
                 ctx.json(messages);
             }
         }
+        
 
         public void getAllMessageByAccountIdHandler(Context ctx) {
             int accountId = Integer.parseInt(ctx.pathParam("account_id"));
